@@ -1,0 +1,100 @@
+*{font-family: '黑体';margin: 0;padding: 0;box-sizing: border-box}
+#main{display: flex;}
+.header-nav{
+    width: 12.5%;
+    height: 100vh;
+    background: #666666;
+    cursor: pointer;
+}
+.container-fluid{
+    width: 87.5%;
+    height: 100vh;
+    padding: 0;
+}
+.m-title{
+    height: 1.36rem;
+    width: 100%;
+    text-align: center;
+    border-bottom: 1px solid #E7E6E6;
+    line-height: 1.36rem;
+}
+.m-title>.logo{
+    height: 0.7rem;
+    margin-top: -0.16rem;
+}
+.m-title>.title{
+    font-size: 0.48rem;
+    color: #333333;
+    letter-spacing: 0;
+}
+.header-nav>.admin{
+    margin: 0.5rem 0.8rem;
+}
+.header-nav>.admin>img{
+    height: 0.8rem;
+    width: 0.8rem;
+}
+.header-nav>.admin>.label{
+    display: block;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+}
+.nav-item{
+    height: 0.64rem;
+    width: 100%;
+    color: #ffffff;
+    text-align: center;
+    font-size: 0.24rem;
+    color: #FFFFFF;
+    line-height: 0.64rem;
+}
+/* .nav-item.active{
+    background: #B44746;
+} */
+.nav-item.nav1.num1{
+    background: #B44746;
+}
+.nav-item.nav2.num2{
+    background: #B44746;
+}
+.nav-item.nav3.num3{
+    background: #B44746;
+}
+.nav-item.nav4.num4{
+    background: #B44746;
+}
+.appmain{
+    height:85vh;
+    overflow: auto; 
+    padding: 0.4rem;
+}
+
+.loginout{
+    width: 1.36rem;
+    height: 0.5rem;
+    line-height: 0.5rem;
+    background: #B44746;
+    text-align: center;
+    font-size: 0.2rem;
+    color: #FFFFFF;
+    position: absolute;
+    bottom: 1.2rem;
+    left: 0.52rem;
+}
+.table th {
+    background: #666666;
+    height: 0.7rem;
+    font-size: 0.2rem;
+    color: #ffffff;
+    text-align: center;
+}
+.table td {
+    text-align: center;
+}
+
+/* ??????? */
+.modal-content{}
+.modal-header{background-color: #666666;color: #ffffff}
+.modal-header button{color: #ffffff}
+.modal-footer{text-align: center;}
+.modal-footer button{border: none;outline: none;color: #ffffff;background: #B44746;}

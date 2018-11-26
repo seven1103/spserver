@@ -1,0 +1,72 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <style>
+        .tagview{
+            display: flex;
+            justify-content: space-between;
+        }
+        .tagview>.title{
+            font-size: 0.3rem;
+            color: #333;
+            border-bottom: 1px solid #B44746;
+            line-height: 2;
+            display: inline-block;
+            height: 0.6rem;
+            line-height: 0.6rem;
+            padding: 0 0.2rem;
+        }
+        .tagview>.export{
+            width: 1.36rem;
+            height: 0.5rem;background: #B44746;
+            line-height: 0.5rem;color: #ffffff;
+            text-align: center;font-size: 0.2rem;
+            border: none;outline: none;
+            margin-top: 0.15rem;
+        }
+        .table{
+            margin-top: 2.8vh;
+            border: 1px solid #6BB114;
+        }
+        td>span.icon{font-size: 0.12rem;display: block;line-height: 0.2rem;cursor: pointer}
+        td>span.icon>i{margin-left: 0.1rem}
+    </style>
+    <div class="tagview">
+        <span class="title">用户管理</span>
+        <button class="export">导出Excel</button>
+    </div>
+    <table class="table">
+       <thead>
+          <tr>
+             <th>序号</th>
+             <th>用户名</th>
+             <th>性别</th>
+             <th>联系电话</th>
+             <th>所在地</th>
+             <th>微信号</th>
+             <th>加入时间</th>
+          </tr>
+       </thead>
+       <tbody>
+        {% for index,item in obj.list %}
+        <tr>
+          <td>{{index + 1}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.sex}}</td>
+          <td>{{item.address.phone}}</td>
+          <td>{{item.address.provice + item.address.city + item.address.county + item.address.info}}</td>
+          <td>{{item.w_id}}</td>
+          <td>{{item.timed}}</td>
+        </tr>
+        {% endfor %}
+       </tbody>
+    </table>
+    <p>{{obj.count}}</p>
+    {% include 'page.html' %}
+    <script>
+        $('.export').click(function(){
+            window.location.href = '/admin/userexcel'
+        })
+        
+    </script>
+{% endblock %}

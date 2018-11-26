@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>首杯后台管理</title>
+    <link rel="stylesheet" href="/public/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/public/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="/public/css/layout.css">
+    <script src="/public/js/jquery.min.js"></script>
+    <script src="/public/js/bootstrap.min.js"></script>
+    <script src="/public/js/model.js"></script>
+    <script src="/public/js/alert.js"></script>
+</head>
+<body id="main">
+    <div class="header-nav">
+        <div class="admin">
+            <img src="/public/images/touxiang.png" alt="">
+            <span class="label">{{userinfo.name}}</span>
+        </div>
+        <div class="nav">
+            {% if userinfo.powers | array_contain(1) %}
+            <div class="nav-item num1 {{nav}}" data-url="/admin/activity">活动管理</div>
+            {% endif %}
+            {% if userinfo.powers | array_contain(2) %}
+            <div class="nav-item num2 {{nav}}" data-url="/admin/order">订单管理</div>
+            {% endif %}
+            {% if userinfo.powers | array_contain(3) %}
+            <div class="nav-item num3 {{nav}}" data-url="/admin/user">用户管理</div>
+            {% endif %}
+            {% if userinfo.powers | array_contain(4) %}
+            <div class="nav-item num4 {{nav}}" data-url="/admin/admins">账号管理</div>
+            {% endif %}
+        </div>
+        <div class="loginout">
+            <a href="/admin/adminlogout" style="color:#fff;">退出登录</a>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="m-title">
+            <img class="logo" src="/public/images/tu2.png" alt="">
+            <span class="title">首杯后台管理系统</span>
+        </div>
+        <div class="appmain">
+            {% block main %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    document.documentElement.style.fontSize = document.documentElement.clientWidth/19.2 + 'px';
+    window.onresize = function(){
+       document.documentElement.style.fontSize = document.documentElement.clientWidth/19.2 + 'px';
+    }
+    $('.nav').find('.nav-item').click(function(){
+        // $('.nav>.nav-item').removeClass('active');
+        // $(this).addClass('active');
+        location.href= $(this).attr('data-url');
+    })
+</script>

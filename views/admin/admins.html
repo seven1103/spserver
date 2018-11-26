@@ -1,0 +1,292 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <style>
+        .tagview{
+            display: flex;
+            justify-content: space-between;
+        }
+        .tagview>.title{
+            font-size: 0.3rem;
+            color: #333;
+            border-bottom: 1px solid #B44746;
+            line-height: 2;
+            display: inline-block;
+            height: 0.6rem;
+            line-height: 0.6rem;
+            padding: 0 0.2rem;
+        }
+        .tagview>.add{
+            width: 1.36rem;
+            height: 0.5rem;background: #B44746;
+            line-height: 0.5rem;color: #ffffff;
+            text-align: center;font-size: 0.2rem;
+            border: none;outline: none;
+            margin-top: 0.15rem;
+        }
+        .table{
+            margin-top: 2.8vh;
+            border: 1px solid #6BB114;
+        }
+        td>span.icon{font-size: 0.12rem;display: block;line-height: 0.2rem;cursor: pointer}
+        td>span.icon>i{margin-left: 0.1rem}
+        .form{margin-left: 20%;margin-top: 0.2rem}
+        .form *{font-size: 0.16rem;color: #333}
+        .checkbox-inline{color: #666}
+    </style>
+    <div class="tagview">
+        <span class="title">账号管理</span>
+        <button class="add">添加账号</button>
+    </div>
+    <table class="table">
+       <thead>
+          <tr>
+             <th>序号</th>
+             <th>管理员</th>
+             <th>性别</th>
+             <th>账号</th>
+             <!-- <th>部门</th> -->
+             <th>职位</th>
+             <th>权限</th>
+             <th>操作</th>
+          </tr>
+       </thead>
+       <tbody>
+        {% for index,item in obj.list %}
+        <tr>
+          <td>{{index + 1}}</td>
+          <td>{{item.name}}</td>
+          <td>{{item.sex}}</td>
+          <td>{{item.account}}</td>
+          <!-- <td>{{item.gov}}</td> -->
+          <td>{{item.position}}</td>
+          <td>{{item.powers}}</td>
+          <td>
+              <span class="icon edit" data-info={{JSON.stringify(item)}}><i class="glyphicon glyphicon-edit"></i>编辑</span>
+              <span class="icon del" data-id={{item._id}}><i class="glyphicon glyphicon-trash"></i>删除</span>
+          </td>
+        </tr>
+        {% endfor %}
+       </tbody>
+    </table>
+    <p>{{obj.count}}</p>
+    {% include 'page.html' %}
+    <script>
+        let array_contain = function(array, obj){
+            for (var i = 0; i < array.length; i++){
+                if (array[i] == obj)//如果要求数据类型也一致，这里可使用恒等号===
+                    return true;
+            }
+            return false;
+        }
+
+        let add = function(){
+            var $add_form = $('#newadmin');
+            var account = $add_form.find('[name="account"]').val().trim(),
+            password = $add_form.find('[name="password"]').val().trim(),
+            name = $add_form.find('[name="name"]').val().trim(),
+            sex = $add_form.find('[name="sex"]').val().trim(),
+            position = $add_form.find('[name="position"]').val().trim();
+            var check = $add_form.find('[type="checkbox"]'),
+            check_val = new Array();
+            for(k in check){
+                if(check[k].checked)
+                    check_val.push(check[k].value);
+            }
+            
+            if(account&&password&&name&&sex&&check_val.length>0){
+                $.ajax({
+                    url:'/admin/addadmin/',
+                    type:'post',
+                    traditional: true,
+                    data:{
+                        account:account,
+                        password:password,
+                        name:name,
+                        sex:sex,
+                        position:position,
+                        powers:check_val
+                    },
+                    dataType:'json',
+                    success:function (data) {
+                        if(data.code==0){
+                            Ewin.alert('创建成功');
+                            window.location.reload();
+                        }else{
+                            Ewin.alert(data.msg)
+                        }
+                    }
+                })
+            }else{
+                alert('请输入完整')
+            }
+        }
+        let edit = function(){
+            var $add_form = $('#editadmin');
+            var id = $add_form.find('.form').attr('data-id');
+            var account = $add_form.find('[name="account"]').val().trim(),
+            password = $add_form.find('[name="password"]').val().trim(),
+            name = $add_form.find('[name="name"]').val().trim(),
+            sex = $add_form.find('[name="sex"]').val().trim(),
+            position = $add_form.find('[name="postion"]').val();
+            var check = $add_form.find('[type="checkbox"]'),
+            check_val = [];
+            for(k in check){
+                if(check[k].checked)
+                    check_val.push(check[k].value);
+            }
+            
+            if(account&&password&&name&&sex&&check_val.length>0){
+                $.ajax({
+                    url:'/admin/updateadmin/'+id,
+                    type:'put',
+                    traditional: true,
+                    data:{
+                        account:account,
+                        password:password,
+                        name:name,
+                        sex:sex,
+                        position:position,
+                        powers:check_val
+                    },
+                    dataType:'json',
+                    success:function (data) {
+                        if(data.code==0){
+                            Ewin.alert('修改成功');
+                            window.location.reload();
+                        }else{
+                            Ewin.alert(data.msg)
+                        }
+                    }
+                })
+            }else{
+                alert('请输入完整')
+            }
+        }
+
+        
+        
+        $('.add').click(function(){
+            $(this).attr('data-toggle','modal');
+            $(this).attr('data-target','#newadmin');
+            var html = `<div class="form">
+                <div class="inputgroup">
+                    <label for="">账号</label>
+                    <input type="text" name="account">
+                </div>
+                <div class="inputgroup">
+                    <label for="">密码</label>
+                    <input type="text" name="password">
+                </div>
+                <div class="inputgroup">
+                    <label for="">姓名</label>
+                    <input type="text" name="name">
+                </div>
+                <div class="inputgroup">
+                    <label for="">性别</label>
+                    <select name="sex" id="">
+                        <option value="0">未知</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+                <div class="inputgroup">
+                    <label for="">职位</label>
+                    <input type="text" name="position">
+                </div>
+                <div class="inputgroup">
+                    <label for="">设置权限</label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox1" value="1"> 活动管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox2" value="2"> 订单管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox3" value="3"> 用户管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox3" value="4"> 账号管理
+                    </label>
+                </div>
+            </div>`
+            var dom = Modal({
+                title:'添加账号',
+                html:html,
+                id:'newadmin',
+                fnName:'add'
+            })
+        })
+        $('.edit').click(function(){
+            $(this).attr('data-toggle','modal');
+            $(this).attr('data-target','#editadmin');
+            var info = JSON.parse($(this).attr('data-info'));
+            var html = `<div class="form" data-id= ${info._id} >
+                <div class="inputgroup">
+                    <label for="">账号</label>
+                    <input type="text" name="account" value=${info.account} >
+                </div>
+                <div class="inputgroup">
+                    <label for="">密码</label>
+                    <input type="text" name="password" value=${info.password} >
+                </div>
+                <div class="inputgroup">
+                    <label for="">姓名</label>
+                    <input type="text" name="name" value=${info.name} >
+                </div>
+                <div class="inputgroup">
+                    <label for="">性别</label>
+                    <select name="sex" id="" value=${info.sex}>
+                        <option value="0">未知</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+                <div class="inputgroup">
+                    <label for="">职位</label>
+                    <input type="text" name="position" value=${info.position} >
+                </div>
+                <div class="inputgroup">
+                    <label for="">设置权限</label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox1" value="1" checked=${array_contain(info.powers,1)}> 活动管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox2" value="2" checked=${array_contain(info.powers,2)}> 订单管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox3" value="3" checked=${array_contain(info.powers,3)}> 用户管理
+                    </label>
+                    <label class="checkbox-inline">
+                        <input type="checkbox" id="inlineCheckbox3" value="4" checked=${array_contain(info.powers,4)}> 账号管理
+                    </label>
+                </div>
+            </div>`
+            var dom = Modal({
+                title:'编辑账号',
+                html:html,
+                id:'editadmin',
+                fnName:'edit'
+            })
+        })
+        $('.del').click(function(){
+            var id = $(this).attr('data-id');
+            Ewin.confirm({ message: "确认要删除选择的数据吗？" }).on(function (e) {
+                if(!e){return}
+                $.ajax({
+                    url:'/admin/deladmin/'+id,
+                    method:'delete',
+                    success:function(data){
+                        if(data.code==0){
+                            Ewin.alert('删除成功');
+                            window.location.reload();
+                        }else{
+                            Ewin.alert(data.msg);
+                        }
+                    }
+                })
+            })
+        })
+
+    </script>
+{% endblock %}

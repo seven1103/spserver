@@ -1,0 +1,342 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <!-- <link rel="stylesheet" href="/public/css/bootstrap-datepicker.css"> -->
+    <style>
+        .tagview{
+            display: flex;
+            justify-content: space-between;
+        }
+        .tagview .title{
+            font-size: 0.3rem;
+            color: #333;
+            line-height: 2;
+            display: inline-block;
+            height: 0.6rem;
+            line-height: 0.6rem;
+            padding: 0 0.2rem;
+        }
+        .title.active{
+            border-bottom: 1px solid #B44746;
+        }
+        .title>a{
+            color: #333; 
+        }
+        .form_group{margin-top: 0.2rem;padding: 0.4rem 0.6rem;background: #666666;padding-bottom: 2.4rem}
+        .inputitem{margin-bottom: 0.25rem}
+        .label{font-size: 0.18rem;color: #FFFFFF;}
+        input{background: #FFFFFF;border: none;outline: none}
+        .col6{display: inline-block;width: 30%}
+        .col4{display: inline-block;width: 20%}
+        .push-group>button{font-size: 0.18rem;margin-top: 0.8rem;width: 1.13rem;height: 0.38rem;color: #FFFFFF;line-height: 0.38rem;text-align: center;border: none;outline: none}
+        .push{background: #B44746;margin-right: 0.4rem}
+        .reset{background: #999797;}
+        .input-group-addon{padding: 0;height: 0;width: 0}
+        .date{display: inline-block;}
+        .addimg{position: relative;height: 1.1rem;width: 2rem;text-align: center;background: #FFFFFF;color: #999797;}
+        .addimg>span{display: block}
+        .addimg>span:nth-child(1){font-size: 0.5rem}
+        .addimg>span:nth-child(2){font-size: 0.14rem}
+        .uploadFile{height: 1.1rem;width: 2rem;position: absolute;top: 0;left: 0;opacity: 0}
+        .node{color: #FFFFFF;font-size: 0.14rem;line-height: 0.5rem}
+
+        .imgFile {
+                width:60%;
+                border:1px solid #dbdbdb;
+                display:flow-root
+            }
+            @supports (display:flow-root) {
+                .imgFile {
+                display:flow-root;
+            }
+            }.imgFile label input {
+                display:none
+            }
+            .imgFile label span {
+                width:2rem;
+                height:1.1rem;
+                display:inline-block;
+                background: #ffffff;
+                margin:16px;
+                position:relative
+            }
+            #goodsfile.imgFile label span{
+                width:1.1rem;
+                height:1.1rem;
+            }
+            .imgFile label span:after {
+                width:60%;
+                height:1px;
+                background:#dbdbdb;
+                content:"";
+                display:inline-block;
+                position:absolute;
+                top:50%;
+                left:calc(50% - 30%)
+            }
+            .imgFile label span:before {
+                width:1px;
+                height:60%;
+                background:#dbdbdb;
+                content:"";
+                display:inline-block;
+                position:absolute;
+                left:50%;
+                top:calc(50% - 30%)
+            }
+            .imgFile .imgDiv {
+                width:2rem;
+                height:1.1rem;
+                /* border:1px solid #999999; */
+                margin:16px;
+                position:relative;
+                float:left
+            }
+            #goodsfile.imgFile .imgDiv{
+                width:1.1rem;
+                height:1.1rem;
+            }
+            .imgFile .imgDiv img {
+                width:100%;
+                height:100%;
+            }
+            .imgFile .imgDiv span {
+                width:100%;
+                height:20%;
+                color:white;
+                display:none;
+                background:rgba(0,0,0,0.38);
+                position:absolute;
+                top:0;
+                left:0;
+                right:0
+            }
+            .imgFile .imgDiv i {
+                font-style:inherit;
+                float:right;
+                cursor:pointer;
+                margin-right:5px;
+                line-height:100%;
+                font-size:20px
+            }
+            .imgFile .imgDiv:hover > span {
+                display:block
+            }
+
+   </style>
+    <div class="tagview">
+        <div class="tabtitle">
+            <span class="title"><a href="/admin/activity">活动管理</a></span><span class="title">></span><span class="title active">编辑活动</span>
+        </div>
+    </div>
+    <form class="form_group" id="form_group">
+        <div class="inputitem">
+            <span class="label">活动名称</span>
+            <input name="content" type="text" value={{info.content}}>
+        </div>
+        <div class="inputitem">
+            <div class="col6">
+                <span class="label">开始时间</span>
+                <div class="input-group date" data-provide="datepicker">
+                        <input name="startTime" type="text" id="startTime" value={{info.time.start | getTime}} >
+                        <div class="input-group-addon"></div>
+                </div>
+            </div>
+            <div class="col6">
+                <span class="label">结束时间</span>
+                <div class="input-group date" data-provide="datepicker">
+                        <input name="finishTime" type="text" id="finishTime" value={{info.time.finished | getTime}} >
+                        <div class="input-group-addon"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="inputitem">
+            <span class="label">商品名称</span>
+            <input name="title" type="text" value={{info.title}} >
+        </div>
+        <div class="inputitem">
+            <div class="col4">
+                <span class="label">商品数量</span>
+                <input name="stock" type="number" value={{info.stock}} >
+            </div>
+            <div class="col4">
+                <span class="label">商品单价</span>
+                <input name="price"  type="number" value={{info.price}} >
+            </div>
+            <div class="col4">
+                <span class="label">限购数量</span>
+                <input name="limitcount" type="number" value={{info.limitcount}} >
+            </div>
+        </div>
+        <!-- <span class="label" style="display:block;margin-bottom:0.2rem;text-align:left">商品图片</span>
+        <div class="imgFile" id="goodsfile">
+            {% for index,item in info.goodimg %}
+            <div class="imgDiv">
+                <img id="" src="{{item | tempPath}}" alt="">
+                <span><i class="imgRem">×</i></span>
+            </div>
+            {% endfor %}
+            <label>
+                <span></span>
+                <input type="file" class="file">
+            </label>
+        </div>
+        <p class="node">备注：需要上传JPG/PNG图片,最多上传5张图片</p>
+        <span class="label" style="display:block;margin-bottom:0.2rem;text-align:left">活动照片</span>
+        <div class="imgFile" id="bannersfile">
+                
+            {% for index,item in info.banner %}
+            <div class="imgDiv">
+                <img id="" src="{{item | tempPath}}" alt="">
+                <span><i class="imgRem">×</i></span>
+            </div>
+            {% endfor %}
+            <label>
+                <span></span>
+                <input type="file" class="file">
+            </label>
+        </div>
+        <p class="node">备注：需要上传600*1200像素的JPG/PNG图片,最多上传5张图片</p> -->
+        <div class="push-group">
+            <button class="push">确认发布</button>
+            <button class="reset">重置</button>
+        </div>
+    </form>
+    <script src="/public/js/bootstrap-datepicker.js"></script>
+    <script src="/public/js/bootstrap-datepicker.zh-CN.js"></script>
+    <script>
+        $('#startTime').parent().datepicker({
+            "autoclose":true,"format":"yyyy-mm-dd","language":"zh-CN"
+        });
+        $('#finishTime').parent().datepicker({
+            "autoclose":true,"format":"yyyy-mm-dd","language":"zh-CN"
+        });
+        let goodsfiles = [];
+        let files = [];
+        $("#goodsfile .file").change(function() {
+            //获取图片信息
+            var fileLise = $(this)[0].files;
+            var fileLength = fileLise.length;
+            // 判断当前活动图片数量
+            if(goodsfiles.length>5){
+                alert('图片已达上限');
+                return
+            }
+            goodsfiles.push(fileLise[0]);
+            //然后循环 生成html 插入页面上 最后就赋值给img
+            for (var i = 0; i < fileLength; i++) {
+                var imgDiv = '<div class="imgDiv"><img id="img' + fileLise[i].name + '"><span><i class="imgRem">×</i></span></div>';
+                $("#goodsfile").prepend(imgDiv);
+                var imgName = document.getElementById("img" + fileLise[i].name);
+                if (fileLise && fileLise[i]) {
+                    var file = new FileReader();
+                    file.readAsDataURL(fileLise[i]);
+                    file.onload = function() {
+                        // console.log(this);
+                        imgName.src = this.result
+                    }
+                }
+            }
+        });
+        $("#bannersfile .file").change(function() {
+            //获取图片信息
+            var fileLise = $(this)[0].files;
+            var fileLength = fileLise.length;
+            // 判断当前活动图片数量
+            if(files.length>5){
+                alert('图片已达上限');
+                return
+            }
+            files.push(fileLise[0]);
+            //然后循环 生成html 插入页面上 最后就赋值给img
+            for (var i = 0; i < fileLength; i++) {
+                var imgDiv = '<div class="imgDiv"><img id="img' + fileLise[i].name + '"><span><i class="imgRem">×</i></span></div>';
+                $("#bannersfile").prepend(imgDiv);
+                var imgName = document.getElementById("img" + fileLise[i].name);
+                if (fileLise && fileLise[i]) {
+                    var file = new FileReader();
+                    file.readAsDataURL(fileLise[i]);
+                    file.onload = function() {
+                        // console.log(this);
+                        imgName.src = this.result
+                    }
+                }
+            }
+        });
+
+        $("#goodsfile").on("click", ".imgRem", function() {
+            var value = $(this).parent().parent().find('img').attr('id');
+            goodsfiles.forEach(function(item,index){
+                if('img'+item.name==value){
+                    goodsfiles.splice(index,1)
+                }
+            })
+            $(this).parents(".imgDiv").remove();
+        });
+        $("#bannersfile").on("click", ".imgRem", function() {
+            var value = $(this).parent().parent().find('img').attr('id');
+            files.forEach(function(item,index){
+                if('img'+item.name==value){
+                    files.splice(index,1)
+                }
+            })
+            $(this).parents(".imgDiv").remove();
+        });
+
+
+        $('.reset').click(function(){
+            $('.form_group')[0].reset();
+        })
+        //提交
+        $('.push').click(function(e){
+            e.preventDefault();
+            //参数效验
+            var $form = $('#form_group');
+            var content = $form.find('[name="content"]').val().trim(),
+            startTime = $form.find('[name="startTime"]').val().trim(),
+            finishTime = $form.find('[name="finishTime"]').val().trim(),
+            title = $form.find('[name="title"]').val().trim(),
+            stock = $form.find('[name="stock"]').val().trim(),
+            price = $form.find('[name="price"]').val().trim(),
+            limitcount = $form.find('[name="limitcount"]').val().trim();
+            if(content&&startTime&&finishTime&&title&&stock&&price&&limitcount&&files.length>0&&goodsfiles.length>0){
+                var fd = new FormData();
+                fd.append('content', content);
+                fd.append('startTime', startTime);
+                fd.append('finishTime', finishTime);
+                fd.append('title', title);
+                fd.append('stock', stock);
+                fd.append('price', price);
+                fd.append('limitcount', limitcount);
+                files.forEach(function(item,index){
+                    fd.append('banner'+index, item);
+                })
+                goodsfiles.forEach(function(item,index){
+                    fd.append('goods'+index, item);
+                })
+
+                $.ajax({
+                    url:'/admin/activity',
+                    type:'POST',
+                    data:fd,
+                    processData:false,  //tell jQuery not to process the data
+                    contentType: false,  //tell jQuery not to set contentType
+                    //这儿的三个参数其实就是XMLHttpRequest里面带的信息。
+                    success:function (data) {
+                        if(data.code==0){
+                            alert('添加成功');
+                            $('.form_group').find(".imgDiv").remove();
+                            $('.form_group')[0].reset();
+                        }else{
+                            alert('添加失败')
+                        }
+                    }
+                })
+            }else{
+                alert('请输入完整')
+            }
+
+        })
+    </script>
+{% endblock %}

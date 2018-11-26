@@ -1,0 +1,147 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+    <style>
+        .tagview{
+            display: flex;
+            justify-content: space-between;
+        }
+        .tagview>.title{
+            font-size: 0.3rem;
+            color: #333;
+            border-bottom: 1px solid #B44746;
+            line-height: 2;
+            display: inline-block;
+            height: 0.6rem;
+            line-height: 0.6rem;
+            padding: 0 0.2rem;
+        }
+        .tagview>.export{
+            width: 1.36rem;
+            height: 0.5rem;background: #B44746;
+            line-height: 0.5rem;color: #ffffff;
+            text-align: center;font-size: 0.2rem;
+            border: none;outline: none;
+            margin-top: 0.15rem;
+        }
+        .table{
+            margin-top: 2.8vh;
+            border: 1px solid #6BB114;
+        }
+        td>span.icon{font-size: 0.12rem;display: block;line-height: 0.2rem;cursor: pointer}
+        td>span.icon>i{margin-left: 0.1rem}
+        .form{margin-left: 20%;margin-top: 0.2rem}
+        .form *{font-size: 0.16rem;color: #333}
+        .form p{color: #808080; }
+    </style>
+    <div class="tagview">
+        <span class="title">订单管理</span>
+        <button class="export">导出Excel</button>
+    </div>
+    <table class="table">
+       <thead>
+          <tr>
+             <th>序号</th>
+             <th>商品名称</th>
+             <th>购买数量</th>
+             <th>商品单价</th>
+             <th>收货地址</th>
+             <th>下单时间</th>
+             <th>联系电话</th>
+             <th>物流公司</th>
+             <th>发货单号</th>
+             <th>状态</th>
+             <th>操作</th>
+          </tr>
+       </thead>
+       <tbody>
+        {% for index,item in obj.list %}
+        <tr>
+          <td>{{index + 1}}</td>
+          <td>{{item.goods.title}}</td>
+          <td>{{item.count}}</td>
+          <td>{{item.goods.price}}</td>
+          <td>{{item.address.provice + item.address.city + item.address.county + item.address.info}}</td>
+          <td>{{item.timed | getTime }}</td>
+          <td>{{item.address.phone}}</td>
+          <td>{{item.express.express_company}}</td>
+          <td>{{item.express._id}}</td>
+          {% if (item.status | orderStatus)==='已发货' %}
+          <td style="color:#B44746">{{item.status | orderStatus}}</td>
+          {% else %}
+          <td>{{item.status | orderStatus}}</td>
+          {% endif %}
+          <td><span class="icon edit" data-info={{JSON.stringify(item)}}><i class="glyphicon glyphicon-edit"></i></span></td>
+        </tr>
+        {% endfor %}
+       </tbody>
+    </table>
+    <p>{{obj.count}}</p>
+    {% include 'page.html' %}
+    <script>
+        var edit = function(){
+           var $form = $('.modal');
+           var id = $form.find('.form').attr('data-id');
+           var company = $form.find('[name="company"]').val().trim(),
+           expressId = $form.find('[name="expressid"]').val().trim();
+           orderinfo = $form.find('.name-phone').text() + '    ' + $form.find('.address').text();
+           if(company&&expressId){
+                $.ajax({
+                    url:'/admin/order/'+id,
+                    method:'put',
+                    traditional: true,
+                    data:{
+                        company:company,
+                        expressId:expressId,
+                        orderinfo:orderinfo
+                    },
+                    dataType:'json',
+                    success:function(data){
+                        if(data.code==0){
+                            Ewin.alert('修改成功');
+                            window.location.reload();
+                        }else{
+                            Ewin.alert(data.msg);
+                        }
+                    }
+                })
+           }else{
+                Ewin.alert('请输入完整');
+           }
+        }
+        $('.edit').click(function(){
+            var item = JSON.parse($(this).attr('data-info'));
+            $(this).attr('data-toggle','modal');
+            $(this).attr('data-target','#'+item._id+'');
+
+            var html = `<div class="form" data-id=${item._id}>
+                <div class="inputgroup">
+                    <label for="">商品信息</label>
+                    <p>${item.goods.title}&nbsp;&nbsp;&nbsp;${item.count}${item.goods.unit}</p>
+                </div>
+                <div class="inputgroup">
+                    <label for="">发货信息</label>
+                    <p class="name-phone">${item.address.name}&nbsp;&nbsp; ${item.address.phone}</p>
+                    <p class="address">${item.address.provice + item.address.city + item.address.county + item.address.info}</p>
+                </div>
+                <div class="inputgroup">
+                    <label for="">物流公司</label>
+                    <input type="text" name="company" value="${item.express.express_company}">   
+                </div>
+                <div class="inputgroup">
+                    <label for="">物流单号</label>
+                    <input type="text" name="expressid" value="${item.express._id}">   
+                </div> 
+            </div>`
+            var dom = Modal({
+                title:'编辑物流信息',
+                html:html,
+                id:item._id,
+                fnName:'edit'
+            })
+        })
+        $('.export').click(function(){
+            window.location.href = '/admin/orderexcel'
+        })
+    </script>
+{% endblock %}
